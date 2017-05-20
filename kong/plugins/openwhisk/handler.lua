@@ -23,8 +23,6 @@ local header        = ngx.header
 local var           = ngx.var
 
 local get_req_headers = ngx.req.get_headers
-local ngx_req_ip          = ngx.var.remote_addr
-
 
 local SERVER        = meta._NAME .. "/" .. meta._VERSION
 
@@ -60,7 +58,7 @@ local function retrieve_parameters()
   local headers = get_req_headers()
   local http_metadata = {}
   http_metadata["header"] = headers
-  http_metadata["request_ip"] = ngx_req_ip
+  http_metadata["request_ip"] = var.remote_addr
   http_metadata["method"] = var.request_method
 
   table_merge(get_uri_args(), get_post_args())
