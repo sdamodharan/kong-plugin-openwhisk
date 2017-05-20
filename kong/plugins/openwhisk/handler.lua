@@ -63,7 +63,8 @@ local function retrieve_parameters()
   http_metadata["request_ip"] = ngx_req_ip
   http_metadata["method"] = var.request_method
 
-  return table_merge({ _http: http_metadata },table_merge(get_uri_args(), get_post_args()))
+  table_merge(get_uri_args(), get_post_args())
+  return table_merge(get_uri_args(), { _http: http_metadata })
 end
 
 
