@@ -64,7 +64,7 @@ local function retrieve_parameters()
   http_metadata["method"] = var.request_method
 
   table_merge(get_uri_args(), get_post_args())
-  return table_merge(get_uri_args(), { _http: http_metadata })
+  return table_merge(get_uri_args(), { _http = http_metadata })
 end
 
 
