@@ -49,7 +49,7 @@ local function retrieve_parameters()
     http_metadata["client_ip"] = http_x_real_ip
   end
 
-  let args = table_merge(get_uri_args(), { _http = http_metadata })
+  local args = table_merge(get_uri_args(), { _http = http_metadata })
 
   local content_type = var.content_type
 
