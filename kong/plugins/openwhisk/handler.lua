@@ -45,8 +45,8 @@ local function retrieve_parameters()
   http_metadata["header"] = headers
   http_metadata["request_ip"] = var.remote_addr
   http_metadata["method"] = var.request_method
-  if http_x_real_ip ~= nil then
-    http_metadata["client_ip"] = http_x_real_ip
+  if var.http_x_real_ip ~= nil then
+    http_metadata["client_ip"] = var.http_x_real_ip
   end
 
   local args = table_merge(get_uri_args(), { _http = http_metadata })
