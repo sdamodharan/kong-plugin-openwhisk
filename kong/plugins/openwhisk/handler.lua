@@ -33,20 +33,36 @@ end
 
 
 local function retrieve_parameters()
-  read_body()
+
+  local read_req_body = (var.request_method == "POST") or (var.request_method == "PUT")
+
+  if read_req_body then
+    read_body()
+  end
+
+  local headers = get_req_headers()
+  local http_metadata = {}
+  http_metadata["header"] = headers
+  http_metadata["request_ip"] = var.remote_addr
+  http_metadata["method"] = var.request_method
+  if http_x_real_ip ~= nil then
+    http_metadata["client_ip"] = http_x_real_ip
+  end
+
+  table_merge(get_uri_args(), { _http = http_metadata })
 
   local content_type = var.content_type
 
   if content_type then
     content_type = lower(content_type)
 
-    if find(content_type, "multipart/form-data", nil, true) then
+    if read_req_body and find(content_type, "multipart/form-data", nil, true) then
       return table_merge(
         get_uri_args(),
         multipart(get_body_data(), content_type):get_all())
     end
 
-    if find(content_type, "application/json", nil, true) then
+    if read_req_body and find(content_type, "application/json", nil, true) then
       local json, err = cjson.decode(get_body_data())
       if err then
         return nil, err
@@ -55,14 +71,7 @@ local function retrieve_parameters()
     end
   end
 
-  local headers = get_req_headers()
-  local http_metadata = {}
-  http_metadata["header"] = headers
-  http_metadata["request_ip"] = var.remote_addr
-  http_metadata["method"] = var.request_method
-
-  table_merge(get_uri_args(), get_post_args())
-  return table_merge(get_uri_args(), { _http = http_metadata })
+  return table_merge(get_uri_args(), get_post_args())
 end
 
 
@@ -78,11 +87,6 @@ end
 
 function OpenWhisk:access(config)
   OpenWhisk.super.access(self)
-
-  -- only allow POST
-  if var.request_method ~= "POST" then
-    return responses.send_HTTP_METHOD_NOT_ALLOWED()
-  end
 
   -- get parameters
   local body, err = retrieve_parameters()
