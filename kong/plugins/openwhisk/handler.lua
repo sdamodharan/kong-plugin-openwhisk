@@ -49,7 +49,7 @@ local function retrieve_parameters()
     http_metadata["client_ip"] = http_x_real_ip
   end
 
-  table_merge(get_uri_args(), { _http = http_metadata })
+  let args = table_merge(get_uri_args(), { _http = http_metadata })
 
   local content_type = var.content_type
 
@@ -58,7 +58,7 @@ local function retrieve_parameters()
 
     if read_req_body and find(content_type, "multipart/form-data", nil, true) then
       return table_merge(
-        get_uri_args(),
+        args,
         multipart(get_body_data(), content_type):get_all())
     end
 
@@ -67,11 +67,11 @@ local function retrieve_parameters()
       if err then
         return nil, err
       end
-      return table_merge(get_uri_args(), json)
+      return table_merge(args, json)
     end
   end
 
-  return table_merge(get_uri_args(), get_post_args())
+  return table_merge(args, get_post_args())
 end
 
 
