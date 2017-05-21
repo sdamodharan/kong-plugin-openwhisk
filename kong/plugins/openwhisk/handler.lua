@@ -91,7 +91,7 @@ function OpenWhisk:access(config)
     return responses.send_HTTP_BAD_REQUEST(err)
   end
 
-  -- invoke action
+  -- invoke action/trigger
   local basic_auth
   if config.service_token ~= nil then
     basic_auth = "Basic " .. encode_base64(config.service_token)
@@ -118,7 +118,8 @@ function OpenWhisk:access(config)
   local res, err = client:request {
     method  = "POST",
     path    = concat {          config.path,
-      "/actions/",              config.action,
+      "/", config.type, "/",
+      config.endpoint,
       "?blocking=true&result=", tostring(config.result),
       "&timeout=",              config.timeout
     },
