@@ -119,7 +119,7 @@ function OpenWhisk:access(config)
     method  = "POST",
     path    = concat {          config.path,
       "/", config.type, "/",
-      config.endpoint,
+      config.entity,
       "?blocking=true&result=", tostring(config.result),
       "&timeout=",              config.timeout
     },
